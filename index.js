@@ -4,12 +4,11 @@ import { Proxies } from "./proxyHelpers/src/proxiesClass.js";
 async function test() {
     let p = new proxyHelpers.Proxies();
 
-    await p.getProxies();
+    await p.init();
 
 
-    await p.testProxies()
 
     console.log(p.getActiveProxies().length)
-    console.log(p.toString(true));
+    //console.log(p.toString(true));
 }
 test()

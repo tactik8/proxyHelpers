@@ -1,7 +1,6 @@
+import { Proxy } from "./proxyClass.js";
 
-import { Proxy} from './proxyClass.js'
-
-import { proxyProviders} from './proxyProviders.js'
+import { proxyProviders } from "./proxyProviders.js";
 export class Proxies {
     /**
      * Class to manage proxies
@@ -9,94 +8,110 @@ export class Proxies {
      * @returns {Array} proxies
      * @example
      */
-    constructor(){
+    constructor() {
         this.proxies = [];
     }
 
-    toString(activeOnly = false){
+    async init() {
+        await this.getProxies();
+
+        await this.testProxies();
+
+        this.daemon()
+        
+        return
+    }
+
+    async daemon() {
+        while (true) {
+            if (this.getActiveProxies().length < 20) {
+                await this.testProxies();
+            }
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+    }
+
+    toString(activeOnly = false) {
         /**
          * Get the proxies as a string
          * @returns {String} proxies
          */
-        let content = ''
+        let content = "";
 
-        let proxies = this.proxies
+        let proxies = this.proxies;
 
-        if(activeOnly){
-            proxies = this.getActiveProxies()
+        if (activeOnly) {
+            proxies = this.getActiveProxies();
         }
-        
-        for(let proxy of proxies){
-            content += proxy.toString() + '\n'
+
+        for (let proxy of proxies) {
+            content += proxy.toString() + "\n";
         }
-        return content
+        return content;
     }
 
-
-    getProxy(url){
+    getProxy(url) {
         /**
          * Get a proxy
          * @returns {Object} proxy
          */
-        return this.getActiveProxies(url)?.[0] || undefined
-        
+        return this.getActiveProxies(url)?.[0] || undefined;
     }
 
-
-    getActiveProxies(url){
+    getActiveProxies(url) {
         /**
          * Get a list of active proxies
          * @returns {Array} proxies
          */
-        let activeProxies = this.proxies.filter(x => x.isActive(url))
-        return activeProxies
+        let activeProxies = this.proxies.filter((x) => x.isActive(url));
+        return activeProxies;
     }
 
-    
-    setProxyActive(proxy, url){
+    setProxyActive(proxy, url) {
         /**
          * Set a proxy as inactive
          * @returns {Object} proxy
          */
 
-        let p = this.proxies.find(x => x.ip === proxy.ip && x.port === proxy.port)
-        p.setActive(url)
+        let p = this.proxies.find(
+            (x) => x.ip === proxy.ip && x.port === proxy.port,
+        );
+        p.setActive(url);
 
-        return
+        return;
     }
 
-    
-    setProxyInactive(proxy, url){
+    setProxyInactive(proxy, url) {
         /**
          * Set a proxy as inactive
          * @returns {Object} proxy
          */
 
-        let p = this.proxies.find(x => x.ip === proxy.ip && x.port === proxy.port)
-        p.setInactive(url)
+        let p = this.proxies.find(
+            (x) => x.ip === proxy.ip && x.port === proxy.port,
+        );
+        p.setInactive(url);
 
-        return
+        return;
     }
-    
-    async getProxies(){
+
+    async getProxies() {
         /**
          * Get a list of proxies
          * @returns {Array} proxies
          * @example
          * let proxies = await getProxies()
          * */
-        let proxies = await proxyProviders.getAll()
+        let proxies = await proxyProviders.getAll();
 
-        proxies = proxies.map(x => new Proxy(x))
+        proxies = proxies.map((x) => new Proxy(x));
 
-        proxies.map(x => this.proxies.push(x))
+        proxies.map((x) => this.proxies.push(x));
 
-        console.log('Proxies found: ', proxies.length)
-
-        
+        console.log("Proxies found: ", proxies.length);
     }
 
-    async testProxies(url){
+    async testProxies(url) {
         /**
          * Test all proxies
          * @returns {Array} proxies
@@ -104,30 +119,24 @@ export class Proxies {
          * let proxies = await testProxies()
          * */
 
-        url = url || 'https://www.mondou.com'
+        url = url || "https://www.mondou.com";
 
-        let proxies = this.proxies
+        let proxies = this.proxies;
 
-        proxies = proxies.filter(x => x.status !== 'inactive')
-        
-        
-        let x = 0
-        let l = proxies.length
+        proxies = proxies.filter((x) => x.status === "na");
 
-        
-        while(x < l){
-            let p = proxies.slice(x, x + 10)
-            let promises = []
-            for(let proxy of p){
-                promises.push(proxy.test(url, true))
+        proxies = proxies.slice(0, 100);
+        let x = 0;
+        let l = proxies.length;
 
+        while (x < l) {
+            let p = proxies.slice(x, x + 10);
+            let promises = [];
+            for (let proxy of p) {
+                promises.push(proxy.test(url, true));
             }
-            await Promise.all(promises)
-            x += 10
+            await Promise.all(promises);
+            x += 10;
         }
-
-        
-        
     }
-    
 }

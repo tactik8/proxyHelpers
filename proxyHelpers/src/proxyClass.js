@@ -6,7 +6,7 @@ export class Proxy {
         this.port = record.port;
         this.source = record.source;
         this.domain = {};
-        this.status = "NotTested";
+        this.status = "na";
         this.failedCounter = 0;
     }
 

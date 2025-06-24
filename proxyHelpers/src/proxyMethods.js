@@ -51,7 +51,6 @@ export async function testProxy(proxy, url) {
         return action;
     }
 
-    console.log(url, response.status)
     if (response.status === 200) {
         action.actionStatus = "CompletedActionStatus";
         action.endTime = new Date();
