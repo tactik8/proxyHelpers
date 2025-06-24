@@ -107,7 +107,9 @@ export class Proxies {
         url = url || 'https://www.mondou.com'
 
         let proxies = this.proxies
-        proxies = proxies.slice(0, 20)
+
+        proxies = proxies.filter(x => x.status !== 'inactive')
+        
         
         let x = 0
         let l = proxies.length
@@ -117,15 +119,14 @@ export class Proxies {
             let p = proxies.slice(x, x + 10)
             let promises = []
             for(let proxy of p){
-                promises.push(proxy.test(url))
+                promises.push(proxy.test(url, true))
 
             }
             await Promise.all(promises)
             x += 10
         }
 
-        let active = this.proxies.filter(x => x.status === 'active')
-        console.log('Active proxies: ', active.length)
+        
         
     }
     

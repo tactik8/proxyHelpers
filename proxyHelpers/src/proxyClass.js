@@ -61,7 +61,7 @@ export class Proxy {
         return maxTest;
     }
 
-    async test(url) {
+    async test(url, setAsFailed=false) {
         /**
          * Test the proxy
          * @returns {Object} proxy
@@ -72,6 +72,11 @@ export class Proxy {
         let testResult = await testProxy(this.record, url);
 
         this.addAction(testResult, url);
+
+        if (testResult.actionStatus === "FailedActionStatus" && setAsFailed){
+            this.status = 'inactive'
+        }
+        
     }
 
     addAction(action, url) {
