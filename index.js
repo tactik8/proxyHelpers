@@ -1,4 +1,5 @@
 import { proxyHelpers } from "./proxyHelpers/proxyHelpers.js";
+import { Proxies } from "./proxyHelpers/src/proxiesClass.js";
 
 async function test() {
     let p = new proxyHelpers.Proxies();
@@ -7,7 +8,8 @@ async function test() {
 
 
     await p.testProxies()
-    
+
+    console.log(p.getActiveProxies().length)
     console.log(p.toString(true));
 }
 test()

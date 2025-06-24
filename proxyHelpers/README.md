@@ -5,7 +5,7 @@ JS library for getting proxies
 ## Location
 
 ### Source code
-
+https://github.com/tactik8/proxyHelpers
 
 ### repl.it
 https://replit.com/@tactik8/proxyHelpers
